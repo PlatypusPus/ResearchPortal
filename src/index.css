@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body { @apply font-sans; }
+
+/* Reusable card */
+.card { @apply bg-white rounded-lg shadow-sm border border-slate-200 p-4; }
+.badge { @apply inline-block px-2 py-0.5 rounded text-xs font-medium; }
+.status-pending { @apply badge bg-amber-100 text-amber-700; }
+.status-approved { @apply badge bg-emerald-100 text-emerald-700; }
+.status-denied { @apply badge bg-rose-100 text-rose-700; }
+.status-forwarded { @apply badge bg-brand-100 text-brand-700; }
