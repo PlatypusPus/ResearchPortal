@@ -49,24 +49,17 @@ const ApplicantDashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-64px)] flex items-center justify-center p-6">
-      <div className="w-full max-w-3xl bg-white border-2 border-brand-500 rounded-3xl shadow-sm px-8 py-8 sm:px-10 sm:py-10">
-        <div className="mb-6 text-center">
-          <img
-            src="/src/assets/sjeclogo.png"
-            alt="SJEC Logo"
-            className="mx-auto h-14 w-auto mb-4"
-          />
-          <h1 className="text-2xl sm:text-3xl font-semibold text-black tracking-tight">
-            My Applications
+    <div className="min-h-screen flex items-start justify-center p-6">
+      <div className="w-full max-w-4xl bg-white rounded-2xl shadow-sm px-8 py-10 sm:px-10 sm:py-12">
+        <div className="mb-6 text-left">
+          <h1 className="text-3xl sm:text-4xl font-semibold text-black">
+            Hello {currentUser?.name}
           </h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Manage and submit your research grant applications
-          </p>
+          <p className="mt-1 text-sm text-gray-600">Manage Applications</p>
         </div>
 
         <div className="flex items-center justify-between mb-4">
-          <div></div>
+          <div />
           <button
             onClick={() => setShowForm((s) => !s)}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium transition"
@@ -76,7 +69,7 @@ const ApplicantDashboard: React.FC = () => {
         </div>
 
         {submittedMsg && (
-          <div className="mb-4 rounded-lg border border-brand-100 bg-brand-50 text-brand-800 px-4 py-3 text-sm">
+          <div className="mb-4 rounded-lg bg-brand-50 text-brand-800 px-4 py-3 text-sm">
             {submittedMsg}
           </div>
         )}
@@ -84,7 +77,7 @@ const ApplicantDashboard: React.FC = () => {
         {showForm && (
           <form
             onSubmit={handleSubmit}
-            className="mb-6 bg-white rounded-lg border border-gray-100 p-4 grid grid-cols-1 md:grid-cols-2 gap-3"
+            className="mb-6 bg-white rounded-lg p-4 grid grid-cols-1 md:grid-cols-2 gap-3"
           >
             {[
               { label: "Title of Publication", name: "title" },
