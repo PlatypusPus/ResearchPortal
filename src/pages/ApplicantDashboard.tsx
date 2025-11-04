@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import { useData } from "../data/DataContext";
 
 const ApplicantDashboard: React.FC = () => {
-  const { applications, currentUser, submitApplication } = useData();
+  const { applications, currentUser, submitApplication, addComment } =
+    useData();
   const myApps = applications.filter(
     (a) => a.applicantName === currentUser?.name
   );
   const [showForm, setShowForm] = useState(false);
   const [submittedMsg, setSubmittedMsg] = useState<string | null>(null);
+  const [commentDraft, setCommentDraft] = useState<Record<string, string>>({});
   const [form, setForm] = useState({
     title: "",
     applicationType: "",
@@ -49,27 +51,33 @@ const ApplicantDashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-start justify-center p-6">
-      <div className="w-full max-w-4xl bg-white rounded-2xl shadow-sm px-8 py-10 sm:px-10 sm:py-12">
-        <div className="mb-6 text-left">
-          <h1 className="text-3xl sm:text-4xl font-semibold text-black">
+    <div className="min-h-screen mt-28 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto">
+        <header className="mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold text-black leading-tight">
             Hello {currentUser?.name}
           </h1>
-          <p className="mt-1 text-sm text-gray-600">Manage Applications</p>
-        </div>
+          <p className="mt-2 text-base sm:text-lg text-gray-600">
+            Manage Applications
+          </p>
+        </header>
 
-        <div className="flex items-center justify-between mb-4">
-          <div />
-          <button
-            onClick={() => setShowForm((s) => !s)}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium transition"
-          >
-            {showForm ? "Close Form" : "New Application"}
-          </button>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div className="text-sm text-gray-600">
+            Welcome back — here are your recent submissions.
+          </div>
+          <div className="flex w-full sm:w-auto items-center gap-3">
+            <button
+              onClick={() => setShowForm((s) => !s)}
+              className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium transition"
+            >
+              {showForm ? "Close" : "New Application"}
+            </button>
+          </div>
         </div>
 
         {submittedMsg && (
-          <div className="mb-4 rounded-lg bg-brand-50 text-brand-800 px-4 py-3 text-sm">
+          <div className="mb-6 px-4 py-3 rounded-md bg-brand-50 text-brand-800 text-sm max-w-full">
             {submittedMsg}
           </div>
         )}
@@ -77,128 +85,148 @@ const ApplicantDashboard: React.FC = () => {
         {showForm && (
           <form
             onSubmit={handleSubmit}
-            className="mb-6 bg-white rounded-lg p-4 grid grid-cols-1 md:grid-cols-2 gap-3"
+            className="mb-8 w-full bg-white/60 rounded-md p-4 grid grid-cols-1 md:grid-cols-2 gap-3"
           >
-            {[
-              { label: "Title of Publication", name: "title" },
-              {
-                label: "Application Type",
-                name: "applicationType",
-                type: "select",
-                options: [
-                  "Publication Incentive",
-                  "Conference Registration",
-                  "Journal Publication Support",
-                ],
-              },
-              {
-                label: "Type of Publication",
-                name: "publicationType",
-                type: "select",
-                options: [
-                  "National",
-                  "International",
-                  "Journal",
-                  "Conference Proceedings",
-                  "Other",
-                ],
-              },
-              {
-                label: "Name of Journal/Conference",
-                name: "journalOrConference",
-              },
-              { label: "Quartile of Journal", name: "quartile" },
-              { label: "Impact Factor", name: "impactFactor" },
-              {
-                label: "Type of Indexing (Conference/Journal)",
-                name: "indexingType",
-              },
-              { label: "Publisher Details", name: "publisher" },
-              {
-                label: "Place & Date of Conference",
-                name: "conferencePlaceDate",
-              },
-              { label: "Registration Fee", name: "registrationFee" },
-            ].map((field) => (
-              <div key={field.name} className="flex flex-col">
-                <label className="text-xs font-medium text-slate-600 mb-1">
-                  {field.label}
-                </label>
-                {field.type === "select" ? (
-                  <select
-                    name={field.name}
-                    value={(form as any)[field.name]}
-                    onChange={handleChange}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-200 focus:border-brand-300"
-                  >
-                    <option value="">Select...</option>
-                    {field.options?.map((o) => (
-                      <option key={o} value={o}>
-                        {o}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <input
-                    name={field.name}
-                    value={(form as any)[field.name]}
-                    onChange={handleChange}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-200 focus:border-brand-300"
-                  />
-                )}
+            <input
+              name="title"
+              value={form.title}
+              onChange={handleChange}
+              placeholder="Title of Publication"
+              className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-200"
+            />
+            <select
+              name="applicationType"
+              value={form.applicationType}
+              onChange={handleChange}
+              className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-200"
+            >
+              <option value="">Application Type</option>
+              <option>Publication Incentive</option>
+              <option>Conference Registration</option>
+              <option>Journal Publication Support</option>
+            </select>
+
+            <select
+              name="publicationType"
+              value={form.publicationType}
+              onChange={handleChange}
+              className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-200"
+            >
+              <option value="">Type of Publication</option>
+              <option>National</option>
+              <option>International</option>
+              <option>Journal</option>
+              <option>Conference Proceedings</option>
+              <option>Other</option>
+            </select>
+
+            <input
+              name="journalOrConference"
+              value={form.journalOrConference}
+              onChange={handleChange}
+              placeholder="Name of Journal / Conference"
+              className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-200"
+            />
+
+            <input
+              name="quartile"
+              value={form.quartile}
+              onChange={handleChange}
+              placeholder="Quartile of Journal"
+              className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-200"
+            />
+            <input
+              name="impactFactor"
+              value={form.impactFactor}
+              onChange={handleChange}
+              placeholder="Impact Factor"
+              className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-200"
+            />
+
+            <input
+              name="indexingType"
+              value={form.indexingType}
+              onChange={handleChange}
+              placeholder="Type of Indexing"
+              className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-200"
+            />
+            <input
+              name="publisher"
+              value={form.publisher}
+              onChange={handleChange}
+              placeholder="Publisher Details"
+              className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-200"
+            />
+
+            <input
+              name="conferencePlaceDate"
+              value={form.conferencePlaceDate}
+              onChange={handleChange}
+              placeholder="Place & Date of Conference"
+              className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-200"
+            />
+            <input
+              name="registrationFee"
+              value={form.registrationFee}
+              onChange={handleChange}
+              placeholder="Registration Fee"
+              className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-200"
+            />
+
+            <div className="col-span-full flex flex-col sm:flex-row sm:items-center gap-3">
+              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                <button
+                  type="button"
+                  className="w-full sm:w-auto px-3 py-2 bg-white/60 border border-gray-100 rounded text-xs text-slate-700"
+                >
+                  Upload PDF (Signature)
+                </button>
+                <button
+                  type="button"
+                  className="w-full sm:w-auto px-3 py-2 bg-white/60 border border-gray-100 rounded text-xs text-slate-700"
+                >
+                  Upload Attachment 1
+                </button>
+                <button
+                  type="button"
+                  className="w-full sm:w-auto px-3 py-2 bg-white/60 border border-gray-100 rounded text-xs text-slate-700"
+                >
+                  Upload Attachment 2
+                </button>
               </div>
-            ))}
-
-            <div className="col-span-full flex flex-wrap gap-3 pt-2">
-              <button
-                type="button"
-                className="px-3 py-2 bg-slate-50 border border-gray-100 rounded text-xs text-slate-700"
-              >
-                Upload PDF (Signature)
-              </button>
-              <button
-                type="button"
-                className="px-3 py-2 bg-slate-50 border border-gray-100 rounded text-xs text-slate-700"
-              >
-                Upload Attachment 1
-              </button>
-              <button
-                type="button"
-                className="px-3 py-2 bg-slate-50 border border-gray-100 rounded text-xs text-slate-700"
-              >
-                Upload Attachment 2
-              </button>
-            </div>
-
-            <div className="col-span-full pt-2 flex justify-end">
-              <button
-                type="submit"
-                className="px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium transition"
-              >
-                Submit Application
-              </button>
+              <div className="flex justify-end w-full sm:w-auto">
+                <button
+                  type="submit"
+                  className="mt-2 sm:mt-0 px-5 py-2 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium transition"
+                >
+                  Submit Application
+                </button>
+              </div>
             </div>
           </form>
         )}
 
-        <div className="space-y-3">
+        <div className="space-y-6">
           {myApps.map((app) => (
-            <div
+            <article
               key={app.id}
-              className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm"
+              className="bg-white/60 rounded-lg p-4 sm:p-5 shadow-sm"
             >
-              <div className="flex items-start justify-between gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                 <div className="min-w-0">
-                  <h3 className="text-sm font-semibold text-brand-700 truncate">
+                  <h3 className="text-lg font-semibold text-black truncate">
                     {app.title || "(Untitled)"}
                   </h3>
-                  <p className="mt-1 text-xs text-slate-500">
+                  <p className="mt-1 text-sm text-gray-600">
                     {app.applicationType} • {app.publicationType}
                   </p>
+                  <p className="mt-2 text-xs text-slate-500">
+                    Submitted: {new Date(app.createdAt).toLocaleString()}
+                  </p>
                 </div>
-                <div className="flex-shrink-0">
+                <div className="flex items-start sm:items-center gap-3">
                   <span
-                    className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
+                    className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
                       app.status === "Pending"
                         ? "bg-yellow-50 text-yellow-700"
                         : app.status === "Approved"
@@ -210,32 +238,110 @@ const ApplicantDashboard: React.FC = () => {
                   >
                     {app.status}
                   </span>
+                  <details className="text-sm">
+                    <summary className="cursor-pointer text-brand-700 underline decoration-dotted">
+                      View details
+                    </summary>
+                    <div className="mt-3 grid sm:grid-cols-2 gap-3 text-sm text-slate-700">
+                      <div>
+                        <span className="font-medium text-slate-800">
+                          Journal / Conference:
+                        </span>{" "}
+                        {app.journalOrConference || "—"}
+                      </div>
+                      <div>
+                        <span className="font-medium text-slate-800">
+                          Quartile:
+                        </span>{" "}
+                        {app.quartile || "—"}
+                      </div>
+                      <div>
+                        <span className="font-medium text-slate-800">
+                          Impact Factor:
+                        </span>{" "}
+                        {app.impactFactor || "—"}
+                      </div>
+                      <div>
+                        <span className="font-medium text-slate-800">
+                          Indexing Type:
+                        </span>{" "}
+                        {app.indexingType || "—"}
+                      </div>
+                      <div>
+                        <span className="font-medium text-slate-800">
+                          Publisher:
+                        </span>{" "}
+                        {app.publisher || "—"}
+                      </div>
+                      <div>
+                        <span className="font-medium text-slate-800">
+                          Place & Date:
+                        </span>{" "}
+                        {app.conferencePlaceDate || "—"}
+                      </div>
+                      <div>
+                        <span className="font-medium text-slate-800">
+                          Registration Fee:
+                        </span>{" "}
+                        {app.registrationFee || "—"}
+                      </div>
+                    </div>
+
+                    <div className="mt-3">
+                      <div className="mb-2 text-xs font-medium text-slate-600">
+                        Comments
+                      </div>
+                      <div className="space-y-2">
+                        {app.comments.map((c) => (
+                          <div
+                            key={c.id}
+                            className="text-sm bg-white/70 p-2 rounded text-slate-700"
+                          >
+                            {c.role}: {c.message}
+                          </div>
+                        ))}
+                      </div>
+                      <textarea
+                        value={commentDraft[app.id] || ""}
+                        onChange={(e) =>
+                          setCommentDraft((d) => ({
+                            ...d,
+                            [app.id]: e.target.value,
+                          }))
+                        }
+                        placeholder="Add a comment"
+                        className="w-full mt-3 border rounded p-2 text-sm"
+                        rows={2}
+                      ></textarea>
+                      <div className="mt-2 flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const msg = commentDraft[app.id];
+                            if (msg) {
+                              addComment(app.id, msg);
+                              setCommentDraft((d) => ({ ...d, [app.id]: "" }));
+                            }
+                          }}
+                          className="px-3 py-1 bg-brand-600 text-white rounded text-sm"
+                        >
+                          Add Comment
+                        </button>
+                        <button
+                          type="button"
+                          className="px-3 py-1 bg-white border rounded text-sm"
+                        >
+                          Download PDF
+                        </button>
+                      </div>
+                    </div>
+                  </details>
                 </div>
               </div>
-              {app.comments.length > 0 && (
-                <div className="mt-3 border-t border-gray-100 pt-3">
-                  <div className="text-xs font-semibold text-slate-500 uppercase mb-2">
-                    Comments
-                  </div>
-                  <div className="space-y-2">
-                    {app.comments.map((c) => (
-                      <div
-                        key={c.id}
-                        className="text-xs text-slate-600 flex gap-2"
-                      >
-                        <span className="font-medium text-brand-700">
-                          {c.role}:
-                        </span>
-                        <span>{c.message}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+            </article>
           ))}
           {myApps.length === 0 && (
-            <div className="text-sm text-slate-600">No applications yet.</div>
+            <div className="text-sm text-gray-600">No applications yet.</div>
           )}
         </div>
       </div>
