@@ -50,11 +50,21 @@ const Sidebar = () => {
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
-      <div className="p-6">
-        <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
-          ResearchPortal
-        </h1>
-        <p className="text-xs text-muted-foreground mt-1">Grant Management System</p>
+      <div className="p-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+            ResearchPortal
+          </h1>
+          <p className="text-xs text-muted-foreground mt-1">Grant Management System</p>
+        </div>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="lg:hidden -mr-2" 
+          onClick={() => setIsOpen(false)}
+        >
+          <X className="w-5 h-5" />
+        </Button>
       </div>
 
       <nav className="flex-1 px-4 space-y-2">
